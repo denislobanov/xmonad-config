@@ -11,13 +11,30 @@ import XMonad.Util.Run
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
 
+main = do 
+    h <- spawnPipe "xmobar"
+    xmonad $ defaultConfig
+        { terminal = "urxvt -e /usr/bin/zsh"
+        , focusFollowsMouse = True
+        , borderWidth = 1
+        , normalBorderColor = "#444"
+        , focusedBorderColor = "#f00"
+        , workspaces         = [ show x | x <- [1..9] ]
+        , keys = myKeys
+        , mouseBindings = myMouseBindings
+        , logHook = myLogHook h
+        }
+
 myKeys c = mkKeymap c $
     [ ("M-<Return>",        spawn $ XMonad.terminal c)
     , ("M-<Space>",         sendMessage NextLayout)
     , ("M-S-<Return>",      windows W.swapMaster)
     , ("M-S-c",             kill)
     , ("M-S-q",             io (exitWith ExitSuccess))
-    , ("M-x",               shellPrompt defaultXPConfig)]
+    , ("M-r",               shellPrompt defaultXPConfig)
+    , ("M-b",               sendMessage ToggleStruts)
+    , ("M-h",               sendMessage Shrink)
+    , ("M-l",               sendMessage Expand)]
     ++
     [(m ++ k, windows $ f w)
         | (w, k) <- zip (XMonad.workspaces c) (map show [1..9])
@@ -29,8 +46,8 @@ myMouseBindings (XConfig {XMonad.modMask = modMask}) = M.fromList $
     , ((modMask, button3), (\w -> focus w >> mouseResizeWindow w))
     ]
  
-myLogHook xmobar = dynamicLogWithPP $ defaultPP
-   {  ppOutput = hPutStrLn xmobar
+myLogHook h = dynamicLogWithPP $ defaultPP
+   {  ppOutput = hPutStrLn h
    , ppTitle = xmobarColor "white" "" . shorten 110
    , ppCurrent = xmobarColor "white" "black" . pad
    , ppHidden = pad
@@ -44,16 +61,20 @@ myLogHook xmobar = dynamicLogWithPP $ defaultPP
         _ -> "?"
    }
 
-main = do xmobar <- spawnPipe "xmobar"
-    xmonad $ defaultConfig
-        { terminal = "urxvt -e /usr/bin/zsh"
-        , focusFollowsMouse = True
-        , borderWidth = 1
-        , normalBorderColor = "#444"
-        , focusedBorderColor = "#f00"
-        , workspaces         = [ show x | x <- [1..9] ]
-        , keys = myKeys
-        , mouseBindings = myMouseBindings
-        , logHook = myLogHook xmobar
-        }
+myLayoutHook = smartBorders $ avoidStruts $ tiled ||| Mirror tiled ||| Full
+  where
+     tiled   = Tall nmaster delta ratio
+     nmaster = 1
+     ratio   = 1/2
+     delta   = 4/100
+ 
+ 
+myManageHook = composeAll
+               [ floatC "MPlayer"
+               , floatC "Gimp"
+               , moveToC "Conkeror" "2"
+               ]
+    where moveToC c w = className =? c --> doF (W.shift w)
+          moveToT t w = title     =? t --> doF (W.shift w)
+          floatC  c   = className =? c --> doFloat
 
