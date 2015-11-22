@@ -22,6 +22,8 @@ main = do
         , workspaces         = [ show x | x <- [1..9] ]
         , keys = myKeys
         , mouseBindings = myMouseBindings
+        , layoutHook = myLayoutHook
+        , manageHook = myManageHook
         , logHook = myLogHook h
         }
 
@@ -71,9 +73,7 @@ myLayoutHook = smartBorders $ avoidStruts $ tiled ||| Mirror tiled ||| Full
  
 myManageHook = composeAll
                [ floatC "MPlayer"
-               , floatC "Gimp"
-               , moveToC "Conkeror" "2"
-               ]
+               , floatC "Gimp"]
     where moveToC c w = className =? c --> doF (W.shift w)
           moveToT t w = title     =? t --> doF (W.shift w)
           floatC  c   = className =? c --> doFloat
