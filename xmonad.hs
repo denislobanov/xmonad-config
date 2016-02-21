@@ -25,6 +25,7 @@ main = do
         , layoutHook = myLayoutHook
         , manageHook = myManageHook
         , logHook = myLogHook h
+        , modMask = mod4Mask
         }
 
 myKeys c = mkKeymap c $
