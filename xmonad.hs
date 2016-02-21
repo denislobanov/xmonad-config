@@ -7,11 +7,12 @@ import XMonad.Prompt (defaultXPConfig)
 import XMonad.Prompt.Shell (shellPrompt)
 import XMonad.Util.EZConfig
 import XMonad.Util.Run
- 
+import XMonad.Actions.Navigation2D
+
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
 
-main = do 
+main = do
     h <- spawnPipe "xmobar"
     xmonad $ defaultConfig
         { terminal = "urxvt -e /usr/bin/zsh"
@@ -30,14 +31,31 @@ main = do
 
 myKeys c = mkKeymap c $
     [ ("M-<Return>",        spawn $ XMonad.terminal c)
+
+    -- modify layout
     , ("M-<Space>",         sendMessage NextLayout)
     , ("M-S-<Return>",      windows W.swapMaster)
+    , ("M-b",               sendMessage ToggleStruts)
+
+    -- process control
     , ("M-S-c",             kill)
     , ("M-S-q",             io (exitWith ExitSuccess))
     , ("M-r",               shellPrompt defaultXPConfig)
-    , ("M-b",               sendMessage ToggleStruts)
-    , ("M-h",               sendMessage Shrink)
-    , ("M-l",               sendMessage Expand)]
+
+    -- resizing
+    , ("M-S-h",             sendMessage Shrink)
+    , ("M-S-l",             sendMessage Expand)
+
+    -- move focus
+    , ("M-h",              windowGo L False)
+    , ("M-l",              windowGo R False)
+    , ("M-j",              windowGo D False)
+    , ("M-k",              windowGo U False)
+
+    -- move screens/workspaces
+    , ("M-<Left>",         screenGo L False)
+    , ("M-<Rigth>",        screenGo R False)]
+
     ++
     [(m ++ k, windows $ f w)
         | (w, k) <- zip (XMonad.workspaces c) (map show [1..9])
@@ -48,7 +66,7 @@ myMouseBindings (XConfig {XMonad.modMask = modMask}) = M.fromList $
     , ((modMask, button2), (\w -> focus w >> windows W.swapMaster))
     , ((modMask, button3), (\w -> focus w >> mouseResizeWindow w))
     ]
- 
+
 myLogHook h = dynamicLogWithPP $ defaultPP
    {  ppOutput = hPutStrLn h
    , ppTitle = xmobarColor "white" "" . shorten 110
@@ -70,8 +88,7 @@ myLayoutHook = smartBorders $ avoidStruts $ tiled ||| Mirror tiled ||| Full
      nmaster = 1
      ratio   = 1/2
      delta   = 4/100
- 
- 
+
 myManageHook = composeAll
                [ floatC "MPlayer"
                , floatC "Gimp"]
