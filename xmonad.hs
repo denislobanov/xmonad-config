@@ -8,6 +8,7 @@ import XMonad.Prompt.Shell (shellPrompt)
 import XMonad.Util.EZConfig
 import XMonad.Util.Run
 import XMonad.Actions.Navigation2D
+import XMonad.Actions.WindowGo (raiseMaybe)
 
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
@@ -43,19 +44,36 @@ myKeys c = mkKeymap c $
     , ("M-r",               shellPrompt defaultXPConfig)
 
     -- resizing
-    , ("M-S-h",             sendMessage Shrink)
-    , ("M-S-l",             sendMessage Expand)
+    , ("M-C-h",             sendMessage Shrink)
+    , ("M-C-l",             sendMessage Expand)
+
+    -- swap windows
+    , ("M-S-h",             windowSwap L False)
+    , ("M-S-l",             windowSwap R False)
+    , ("M-S-j",             windowSwap D False)
+    , ("M-S-k",             windowSwap U False)
 
     -- move focus
-    , ("M-h",              windowGo L False)
-    , ("M-l",              windowGo R False)
-    , ("M-j",              windowGo D False)
-    , ("M-k",              windowGo U False)
+    , ("M-h",               windowGo L False)
+    , ("M-l",               windowGo R False)
+    , ("M-j",               windowGo D False)
+    , ("M-k",               windowGo U False)
 
     -- move screens/workspaces
-    , ("M-<Left>",         screenGo L False)
-    , ("M-<Rigth>",        screenGo R False)]
+    , ("M-<L>",             screenGo L False)
+    , ("M-<R>",             screenGo R False)
 
+    -- launch applications
+    , ("M-S-f",             spawn "urxvt -e ranger")
+    , ("M-m",               raiseMaybe (spawn "urxvt -name mutt -e mutt") (title =? "mutt")) 
+    , ("M-S-n",             spawn "urxvt -e ncmpcpp")
+    
+    -- shortcuts & other keybindings
+    , ("<XF86AudioMute>",   spawn "amixer -D pule set Master 1+ togglemut")
+    , ("<XF86AudioLowerVolume>", spawn "amixer -q set Master 1%-")
+    , ("<XF86AudioRaiseVolume>", spawn "amixer -q set Master 1%+")
+    , ("<XF86AudioPlay>", spawn "mpc toggle")
+    ]
     ++
     [(m ++ k, windows $ f w)
         | (w, k) <- zip (XMonad.workspaces c) (map show [1..9])
