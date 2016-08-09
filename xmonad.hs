@@ -73,6 +73,7 @@ myKeys c = mkKeymap c $
     , ("<XF86AudioLowerVolume>", spawn "amixer -q set Master 1%-")
     , ("<XF86AudioRaiseVolume>", spawn "amixer -q set Master 1%+")
     , ("<XF86AudioPlay>", spawn "mpc toggle")
+    , ("M-<Home>",          spawn "i3lock -di /home/xc/images/lockscreen.png")
     ]
     ++
     [(m ++ k, windows $ f w)
