@@ -65,7 +65,7 @@ myKeys c = mkKeymap c $
 
     -- launch applications
     , ("M-S-f",             spawn "urxvt -e ranger")
-    , ("M-m",               raiseMaybe (spawn "urxvt -name mutt -e mutt") (title =? "mutt")) 
+    , ("M-S-m",               raiseMaybe (spawn "urxvt -name mutt -e mutt") (title =? "mutt")) 
     , ("M-S-n",             spawn "urxvt -e ncmpcpp")
     
     -- shortcuts & other keybindings
