@@ -37,6 +37,7 @@ myKeys c = mkKeymap c $
     , ("M-<Space>",         sendMessage NextLayout)
     , ("M-S-<Return>",      windows W.swapMaster)
     , ("M-b",               sendMessage ToggleStruts)
+    , ("M-t",               withFocused $ windows . W.sink)
 
     -- process control
     , ("M-S-c",             kill)
