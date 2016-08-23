@@ -9,6 +9,7 @@ import XMonad.Util.EZConfig
 import XMonad.Util.Run
 import XMonad.Actions.Navigation2D
 import XMonad.Actions.WindowGo (raiseMaybe)
+import XMonad.Hooks.SetWMName
 
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
@@ -28,6 +29,7 @@ main = do
         , manageHook = myManageHook
         , logHook = myLogHook h
         , modMask = mod4Mask
+        , startupHook = setWMName "LG3D"
         }
 
 myKeys c = mkKeymap c $
@@ -74,7 +76,11 @@ myKeys c = mkKeymap c $
     , ("<XF86AudioLowerVolume>", spawn "amixer -q set Master 1%-")
     , ("<XF86AudioRaiseVolume>", spawn "amixer -q set Master 1%+")
     , ("<XF86AudioPlay>", spawn "mpc toggle")
-    , ("M-<Home>",          spawn "i3lock -di /home/xc/images/lockscreen.png")
+    , ("<XF86AudioNext>", spawn "mpc next")
+    , ("<XF86AudioPrev>", spawn "mpc prev")
+    , ("<XF86MonBrightnessDown>", spawn "xbacklight -dec 10")
+    , ("<XF86MonBrightnessUp>", spawn "xbacklight -inc 10")
+    , ("M-<Home>",          spawn "i3lock -di /${HOME}/images/lockscreen.png")
     ]
     ++
     [(m ++ k, windows $ f w)
