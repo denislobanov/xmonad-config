@@ -43,7 +43,7 @@ myKeys c = mkKeymap c $
 
     -- process control
     , ("M-S-c",             kill)
-    , ("M-S-q",             io (exitWith ExitSuccess))
+    , ("M-S-<Escape>",      io (exitWith ExitSuccess))
     , ("M-r",               shellPrompt defaultXPConfig)
 
     -- resizing
