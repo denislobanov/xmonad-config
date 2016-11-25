@@ -28,6 +28,7 @@ main = do
         , layoutHook = myLayoutHook
         , manageHook = myManageHook
         , logHook = myLogHook h
+        , startupHook = setWMName "LG3D"
         , modMask = mod4Mask
         , startupHook = setWMName "LG3D"
         }
