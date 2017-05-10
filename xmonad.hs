@@ -3,7 +3,7 @@ import XMonad
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
 import XMonad.Layout.NoBorders
-import XMonad.Prompt (defaultXPConfig)
+import XMonad.Prompt (defaultXPConfig,font,height)
 import XMonad.Prompt.Shell (shellPrompt)
 import XMonad.Util.EZConfig
 import XMonad.Util.Run
@@ -16,7 +16,7 @@ import qualified Data.Map        as M
 
 main = do
     h <- spawnPipe "xmobar"
-    xmonad $ defaultConfig
+    xmonad $ docks $ defaultConfig
         { terminal = "urxvt -e /usr/bin/zsh"
         , focusFollowsMouse = True
         , borderWidth = 1
@@ -45,7 +45,7 @@ myKeys c = mkKeymap c $
     -- process control
     , ("M-S-c",             kill)
     , ("M-S-<Escape>",      io (exitWith ExitSuccess))
-    , ("M-r",               shellPrompt defaultXPConfig)
+    , ("M-r",               shellPrompt promptConf)
 
     -- resizing
     , ("M-C-h",             sendMessage Shrink)
@@ -79,9 +79,9 @@ myKeys c = mkKeymap c $
     , ("<XF86AudioPlay>", spawn "mpc toggle")
     , ("<XF86AudioNext>", spawn "mpc next")
     , ("<XF86AudioPrev>", spawn "mpc prev")
-    , ("<XF86MonBrightnessDown>", spawn "xbacklight -dec 10")
-    , ("<XF86MonBrightnessUp>", spawn "xbacklight -inc 10")
-    , ("M-<Home>",          spawn "i3lock -di /${HOME}/images/lockscreen.png")
+    , ("<XF86MonBrightnessDown>", spawn "light -U 10")
+    , ("<XF86MonBrightnessUp>", spawn "light -A 10")
+    , ("M-<Home>",          spawn "i3lock -efi /${HOME}/images/lockscreen.png")
     ]
     ++
     [(m ++ k, windows $ f w)
@@ -122,4 +122,9 @@ myManageHook = composeAll
     where moveToC c w = className =? c --> doF (W.shift w)
           moveToT t w = title     =? t --> doF (W.shift w)
           floatC  c   = className =? c --> doFloat
+
+promptConf = defaultXPConfig
+    { font = "xft:TerminessTTF Nerd Font:size=16:antialias=true"
+    , height = 20
+    }
 
